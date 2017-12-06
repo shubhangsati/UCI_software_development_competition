@@ -1,1 +1,1 @@
-# UCI_software_development_competition
+# UCI software development competition
