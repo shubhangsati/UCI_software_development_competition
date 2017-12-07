@@ -2,3 +2,9 @@ map : graph
 roads will be represented by edges in the map graph
 intersections will be represented by NODES in the map graph
 roads will have intermediate nodes which will be equal to the length of the road in number
+
+  | |
+== * ==
+  * *
+== * ==
+  | |
