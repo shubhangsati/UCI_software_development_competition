@@ -3,6 +3,7 @@ from pygame.locals import *
 from road_map import grid
 from traffic_light import trafficlight
 from seconds_counter import SecondCounter
+from car import car
 
 
 def main():
@@ -17,8 +18,11 @@ def main():
 	yellow = (0, 255, 255)
 
 	intersections = {}
+	cars = []
 
 	count = SecondCounter(interval = 1)
+	count2 = SecondCounter(interval = 0.5)
+	count2.start()
 	count.start()
 
 	print 'Road description'
@@ -55,22 +59,24 @@ def main():
 	screen.fill((0, 0, 0,))
 
 	previous_time = count.peek()
+	prevfast = count2.peek()
 
 	while True:
 		current_time = count.peek()
+		currentfast = count2.peek()
 		if current_time - previous_time == 1:
-			print current_time
+			#print current_time
 			for x in range(columns):
 				for y in range(rows):
 					if rmp.map_graph[y][x] != '-':
 						posx = x + 1
 						posy = y + 1
 						pygame.draw.rect(screen, (80, 80, 80), (posx * 50, posy * 50, 50, 50))
+
 			for tup in intersections:
 				intersection = intersections[tup]
 				a, b, c, d = intersection['up'], intersection['right'], intersection['down'], intersection['left']
 				a.tick()
-				print a.color,
 				b.tick()
 				c.tick()
 				d.tick()
@@ -81,6 +87,14 @@ def main():
 				pygame.draw.circle(screen, d.color, (d.xposition, d.yposition), 5)
 
 			previous_time = current_time
+
+		print currentfast
+		if currentfast - prevfast == 0.5:
+			print "fast timer", currentfast
+			for ccar in cars:
+				pygame.draw.rect(screen, ccar.color, (ccar.xposition, ccar.yposition, 10, 10))
+				ccar.tick()
+			prevfast = currentfast
 
 
 
@@ -99,7 +113,7 @@ def main():
 				y = mpos[1]
 				i = 0
 				j = 0
-				if (x >= 50 and x <= 1000 and y >= 50 and y <= 500):
+				if (x >= 50 and x <= columns * 50 and y >= 50 and y <= rows * 50):
 					i = x / 50 - 1
 					j = y / 50 - 1
 					if rmp.map_graph[j][i] == 'I':
@@ -123,6 +137,45 @@ def main():
 							intersections[(j, i)][choice].TIMEGREEN = tgreen
 							intersections[(j, i)][choice].TIMEYELLOW = tyellow
 							intersections[(j, i)][choice].updatetotaltime()
+						count.resume()
+
+					elif rmp.map_graph[j][i] != '-':
+						count2.pause()
+						count.pause()
+						posx = i + 1
+						posy = j + 1
+						c = car((255, 0, 0), '', 0, 0)
+						if rmp.map_graph[j][i] in 'lr':
+							direction = raw_input("Enter the direction for this car (l or r) : ")
+							c.xposition = posx * 50 + 20
+							c.direction = direction
+							if direction == 'l':
+								c.yposition = posy * 50 + 10
+
+							elif direction == 'r':
+								c.yposition = posy * 50 + 30
+
+							else:
+								print "[i] Default direction left set"
+								c.yposition = posy * 50 + 10
+
+						else:
+							direction = raw_input("Enter the direction for this car (u or d) : ")
+							c.yposition = posy * 50 + 20
+							c.direction = direction
+							if direction == 'd':
+								c.xposition = posx * 50 + 10
+								
+							elif direction == 'u':
+								c.xposition = posx * 50 + 30
+								
+							else:
+								print "[i] Default direction down set"
+								c.xposition = posx * 50 + 10
+
+						cars.append(c)
+
+						count2.resume()
 						count.resume()
 
 
