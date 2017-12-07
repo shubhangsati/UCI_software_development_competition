@@ -10,12 +10,13 @@ class trafficlight:
 
 	xposition = 0
 	yposition = 0
-	def __init__(self, TIMERED, TIMEYELLOW, TIMEGREEN, xposition, yposition):
+	def __init__(self, TIMERED, TIMEYELLOW, TIMEGREEN, xposition, yposition, current_timer):
 		self.TIMERED = TIMERED
 		self.TIMEYELLOW = TIMEYELLOW
 		self.TIMEGREEN = TIMEGREEN
 		self.xposition = xposition
 		self.yposition = yposition
+		self.current_timer = current_timer
 		self.totaltime = self.TIMERED + self.TIMEYELLOW + self.TIMEGREEN
 
 	def tick(self):

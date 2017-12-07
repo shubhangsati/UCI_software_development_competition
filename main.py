@@ -4,7 +4,7 @@ from road_map import grid
 from traffic_light import trafficlight
 from seconds_counter import SecondCounter
 from car import car
-
+import random
 
 def main():
 
@@ -34,6 +34,10 @@ def main():
 	print 'To end your input enter 0 0 0 0'
 	print 'After you end your input the map will be created with traffic lights at the intersections'
 	print 'To edit the traffic lights\' behaviour click on the intersection and enter the details as prompted'
+	print 'To add cars click anywhere on the road and enter the details on the console as prompted'
+	print '[-] Unfortunately, the cars don\'t work as expected'
+
+
 	a, b, c, d = map(int, raw_input().split())
 	while True:
 		if a == 0 and b == 0 and c == 0 and d == 0:
@@ -48,11 +52,12 @@ def main():
 			posy = y + 1
 			if rmp.map_graph[y][x] == 'I':
 				intersections[(y, x)] = {
-					'up' : trafficlight(4, 2, 4, posx * 50 + 25, posy * 50 + 10),
-					'right' : trafficlight(4, 2, 4, posx * 50 + 40, posy * 50 + 25),
-					'down' : trafficlight(4, 2, 4, posx * 50 + 25, posy * 50 + 40),
-					'left' : trafficlight(4, 2, 4, posx * 50 + 10, posy * 50 + 25)
+					'up' : trafficlight(25, 5, 10, posx * 50 + 25, posy * 50 + 10, 0),
+					'right' : trafficlight(25, 5, 10, posx * 50 + 40, posy * 50 + 25, 30),
+					'down' : trafficlight(25, 5, 10, posx * 50 + 25, posy * 50 + 40, 20),
+					'left' : trafficlight(25, 5, 10, posx * 50 + 10, posy * 50 + 25, 10)
 				}
+	print intersections.keys()
 
 	pygame.init()
 	screen = pygame.display.set_mode((columns * 50 + 100, rows * 50 + 100))
@@ -65,7 +70,7 @@ def main():
 		current_time = count.peek()
 		currentfast = count2.peek()
 		if current_time - previous_time == 1:
-			#print current_time
+			print current_time
 			for x in range(columns):
 				for y in range(rows):
 					if rmp.map_graph[y][x] != '-':
@@ -76,6 +81,7 @@ def main():
 			for tup in intersections:
 				intersection = intersections[tup]
 				a, b, c, d = intersection['up'], intersection['right'], intersection['down'], intersection['left']
+				print a.current_timer, b.current_timer, c.current_timer, d.current_timer
 				a.tick()
 				b.tick()
 				c.tick()
@@ -88,12 +94,113 @@ def main():
 
 			previous_time = current_time
 
-		print currentfast
 		if currentfast - prevfast == 0.5:
-			print "fast timer", currentfast
 			for ccar in cars:
 				pygame.draw.rect(screen, ccar.color, (ccar.xposition, ccar.yposition, 10, 10))
 				ccar.tick()
+
+				"""
+				i = ccar.xposition / 50 - 1
+				j = ccar.yposition / 50 - 1
+
+				if ((i - 1) >= 0 and j >= 0 and (i - 1) < columns and j < rows):
+					if (rmp.map_graph[j][i - 1] == "I"):
+						directiontogo = random.choice(list(set('lrud') - set(ccar.direction)))
+						print directiontogo
+						if ccar.direction == 'r' and directiontogo == 'd':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'l' and directiontogo == 'u':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'u' and directiontogo == 'r':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'd' and directiontogo == 'l':
+							ccar.direction = directiontogo
+
+						else:
+							ccar.valuetoadd = 0
+							mapping = {'u':'up', 'l':'left', 'r':'right', 'd':'down'}
+							if intersections[(j, i)][mapping[ccar.direction]].color == (0, 255, 0):
+								ccar.valuetoadd = 5
+								ccar.direction =directiontogo
+
+
+				if ((i + 1) >= 0 and j >= 0 and (i + 1) < columns and j < rows):
+					if (rmp.map_graph[j][i + 1] == "I"):
+						directiontogo = random.choice(list(set('lrud') - set(ccar.direction)))
+						print directiontogo
+						if ccar.direction == 'r' and directiontogo == 'd':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'l' and directiontogo == 'u':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'u' and directiontogo == 'r':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'd' and directiontogo == 'l':
+							ccar.direction = directiontogo
+
+						else:
+							ccar.valuetoadd = 0
+							mapping = {'u':'up', 'l':'left', 'r':'right', 'd':'down'}
+							if intersections[(j, i)][mapping[ccar.direction]].color == (0, 255, 0):
+								ccar.valuetoadd = 5
+								ccar.direction =directiontogo
+
+
+				if (i >= 0 and (j - 1) >= 0 and i < columns and (j - 1) < rows):
+					if (rmp.map_graph[j][i - 1] == "I"):
+						directiontogo = random.choice(list(set('lrud') - set(ccar.direction)))
+						print directiontogo
+						if ccar.direction == 'r' and directiontogo == 'd':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'l' and directiontogo == 'u':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'u' and directiontogo == 'r':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'd' and directiontogo == 'l':
+							ccar.direction = directiontogo
+
+						else:
+							ccar.valuetoadd = 0
+							mapping = {'u':'up', 'l':'left', 'r':'right', 'd':'down'}
+							if intersections[(j, i)][mapping[ccar.direction]].color == (0, 255, 0):
+								ccar.valuetoadd = 5
+								ccar.direction =directiontogo
+
+
+				if (i >= 0 and (j + 1) >= 0 and i < columns and (j + 1) < rows):
+					if (rmp.map_graph[j][i - 1] == "I"):
+						directiontogo = random.choice(list(set('lrud') - set(ccar.direction)))
+						print directiontogo
+						if ccar.direction == 'r' and directiontogo == 'd':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'l' and directiontogo == 'u':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'u' and directiontogo == 'r':
+							ccar.direction = directiontogo
+
+						elif ccar.direction == 'd' and directiontogo == 'l':
+							ccar.direction = directiontogo
+
+						else:
+							ccar.valuetoadd = 0
+							mapping = {'u':'up', 'l':'left', 'r':'right', 'd':'down'}
+							if intersections[(j, i)][mapping[ccar.direction]].color == (0, 255, 0):
+								ccar.valuetoadd = 5
+								ccar.direction =directiontogo
+
+
+			"""
+
 			prevfast = currentfast
 
 

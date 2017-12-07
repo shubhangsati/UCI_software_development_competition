@@ -4,6 +4,7 @@ class car:
 	xposition = 0
 	yposition = 0
 	color = (255, 255, 255)
+	valuetoadd = 5
 
 	def __init__(self, color, direction, xpos, ypos):
 		self.direction = direction
@@ -13,13 +14,14 @@ class car:
 
 	def tick(self):
 		if self.direction == 'l':
-			self.xposition -= 5
+			self.xposition -= self.valuetoadd
 
 		elif self.direction == 'r':
-			self.xposition += 5
+			self.xposition += self.valuetoadd
 
 		elif self.direction == 'u':
-			self.yposition -= 5
+			self.yposition -= self.valuetoadd
 
 		else:
-			self.yposition += 5
+			self.yposition += self.valuetoadd
+
